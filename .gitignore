@@ -1,0 +1,6 @@
+SFML
+bin
+lib
+*.png
+*.bmp
+*.lpl
