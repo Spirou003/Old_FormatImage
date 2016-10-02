@@ -20,10 +20,10 @@ namespace LPL
   * Mode permet de choisir plus facilement comment convertir l'image (flags).
   * Il faut fournir trois des sept options, un Px, un Ly, un Tz.
   * Px donne la taille de la palette (2^x)
-  * Ly donne la longueur max de repetitions d'une couleur (2^y)
+  * Ly donne la longueur max de repetitions d'une couleur (4^y - 1, et 63 si L1 et P2)
   * Tz donne la taille max de l'image (2^z)
   * Un choix approprie de modes permet de reduire de maniere optimale la taille
-  * de l'image LPL
+  * de l'image LPL.
   */
 enum Mode
 {

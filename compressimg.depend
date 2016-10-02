@@ -520,10 +520,10 @@
 	<SFML/Graphics.hpp>
 	"LPL.hpp"
 
-1475412420 source:c:\users\julien\_c\_archives\old_formatimage\sources\lpl.cpp
+1475417961 source:c:\users\julien\_c\_archives\old_formatimage\sources\lpl.cpp
 	"LPL.hpp"
 
-1475412420 c:\users\julien\_c\_archives\old_formatimage\sources\lpl.hpp
+1475418452 c:\users\julien\_c\_archives\old_formatimage\sources\lpl.hpp
 	<SFML/Graphics/Image.hpp>
 
 1345993467 c:\users\julien\_c\_archives\old_formatimage\sfml\graphics\image.hpp
@@ -894,7 +894,13 @@
 	<string>
 	<vector>
 
-1475412449 source:c:\users\julien\_c\_archives\old_formatimage\sources\lpl2img.cpp
+1475415886 source:c:\users\julien\_c\_archives\old_formatimage\sources\lpl2img.cpp
+	<cstdio>
+	<cstdlib>
+	<SFML/Graphics.hpp>
+	"LPL.hpp"
+
+1475412420 source:c:\users\julien\_c\_archives\old_formatimage\sources\img2lpl.cpp
 	<cstdio>
 	<cstdlib>
 	<SFML/Graphics.hpp>

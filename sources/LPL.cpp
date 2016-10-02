@@ -1070,7 +1070,7 @@ unsigned char* LPLFI_P2L1(const Image* image, unsigned int* index, const unsigne
         {
             C2 = C1;
             C1 = Tab[x][y];
-            if (C1 == C2)
+            if (C1 == C2 && nb < 63)
             {
                 nb++;
             }
