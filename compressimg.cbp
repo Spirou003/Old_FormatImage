@@ -7,16 +7,23 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin\Debug\compressimg" prefix_auto="1" extension_auto="1" />
+				<Option output="bin\compressimg-d" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin" />
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
+				<Linker>
+					<Add library="sfml-graphics-d" />
+					<Add library="sfml-window-d" />
+					<Add library="sfml-system-d" />
+				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin\Release\compressimg" prefix_auto="1" extension_auto="1" />
+				<Option output="bin\compressimg-r" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin" />
 				<Option object_output="obj\Release\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -25,12 +32,19 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="sfml-graphics" />
+					<Add library="sfml-window" />
+					<Add library="sfml-system" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="." />
 		</Compiler>
+		<Linker>
+			<Add directory="lib" />
+		</Linker>
 		<Unit filename="sources\LPL.cpp" />
 		<Unit filename="sources\LPL.hpp" />
 		<Unit filename="sources\main.cpp" />
