@@ -1,6 +1,7 @@
 SFML
 bin
 lib
+obj
 *.png
 *.bmp
 *.lpl
