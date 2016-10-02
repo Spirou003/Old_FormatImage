@@ -128,6 +128,6 @@ int main(int argc, char ** argv)
     }
     fwrite(lpl_image, 1, size, file);
     fclose(file);
-    delete[](filename);
+    delete[](lpl_filename);
     return 0;
 }

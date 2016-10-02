@@ -16,9 +16,14 @@ bool IsSFColorEqual(const Color &c1, const Color &c2)
 
 Image* GetImageFromLPL(const unsigned char* ptr, unsigned int* index, const unsigned int beginIndex)
 {
-    if (ptr == 00 || index == 00)
+    if (ptr == 00)
     {
         return 00;
+    }
+    unsigned int Index = 0;
+    if (index == 00)
+    {
+        index = &Index;
     }
     unsigned int i = beginIndex;
     if (!(ptr[i] == 'L' && ptr[i+1] == 'P' && ptr[i+2] == 'L'))

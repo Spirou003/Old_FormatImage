@@ -6,8 +6,8 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
-				<Option output="bin\compressimg-d" prefix_auto="1" extension_auto="1" />
+			<Target title="lpl2img-d">
+				<Option output="bin\lpl2img-d" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin" />
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
@@ -21,8 +21,39 @@
 					<Add library="sfml-system-d" />
 				</Linker>
 			</Target>
-			<Target title="Release">
-				<Option output="bin\compressimg-r" prefix_auto="1" extension_auto="1" />
+			<Target title="img2lpl-d">
+				<Option output="bin\img2lpl-d" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="sfml-graphics-d" />
+					<Add library="sfml-window-d" />
+					<Add library="sfml-system-d" />
+				</Linker>
+			</Target>
+			<Target title="lpl2img-r">
+				<Option output="bin\lpl2img-r" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin" />
+				<Option object_output="obj\Release\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="sfml-graphics" />
+					<Add library="sfml-window" />
+					<Add library="sfml-system" />
+				</Linker>
+			</Target>
+			<Target title="img2lpl-r">
+				<Option output="bin\img2lpl-r" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin" />
 				<Option object_output="obj\Release\" />
 				<Option type="1" />
@@ -38,6 +69,10 @@
 				</Linker>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="Debug" targets="img2lpl-d;lpl2img-d;" />
+			<Add alias="Release" targets="img2lpl-r;lpl2img-r;" />
+		</VirtualTargets>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add directory="." />
@@ -47,7 +82,14 @@
 		</Linker>
 		<Unit filename="sources\LPL.cpp" />
 		<Unit filename="sources\LPL.hpp" />
-		<Unit filename="sources\main.cpp" />
+		<Unit filename="sources\img2lpl.cpp">
+			<Option target="img2lpl-d" />
+			<Option target="img2lpl-r" />
+		</Unit>
+		<Unit filename="sources\lpl2img.cpp">
+			<Option target="lpl2img-d" />
+			<Option target="lpl2img-r" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />

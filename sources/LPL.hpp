@@ -40,7 +40,7 @@ bool IsSFColorEqual(const sf::Color &c1, const sf::Color &c2);
   * \param beginIndex: index de debut du LPL dans ptr
   * \return Retourne la conversion de l'image LPL en sf::Image
   */
-sf::Image* GetImageFromLPL(const unsigned char* ptr, unsigned int* index, const unsigned int beginIndex = 0);
+sf::Image* GetImageFromLPL(const unsigned char* ptr, unsigned int* index = 00, const unsigned int beginIndex = 0);
 
 sf::Image* IFLPL_P8L2(const unsigned char* ptr, unsigned int* index, const unsigned char mode, const unsigned int beginIndex = 0);
 sf::Image* IFLPL_P8L1(const unsigned char* ptr, unsigned int* index, const unsigned char mode, const unsigned int beginIndex = 0);
