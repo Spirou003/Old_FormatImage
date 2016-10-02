@@ -1,37 +1,29 @@
 #ifndef PJ_LPL_C
 #define PJ_LPL_C
 
-#include <PJ/Image/LPL.hpp>
+//#include <cstdio>
+#include "LPL.hpp"
 
-#ifdef PJ_DEBUG
-#include <PJ/Util/Exception.hpp>
-#endif
+using namespace sf;
 
-using namespace std;
-
-namespace pj{namespace LPL
+namespace LPL
 {
 
-bool IsSFColorEqual(const sf::Color &c1, const sf::Color &c2)
+bool IsSFColorEqual(const Color &c1, const Color &c2)
 {
     return ((c1.a == c2.a && c1.a == 0) || (c1 == c2));
 }
 
-sf::Image* GetImageFromLPL(const uint8_t* ptr, uint32_t* index, const uint32_t beginIndex){
-#ifdef PJ_DEBUG
-    if (ptr == NULL)
+Image* GetImageFromLPL(const unsigned char* ptr, unsigned int* index, const unsigned int beginIndex)
+{
+    if (ptr == 00 || index == 00)
     {
-        throw NullPointerException("LPL::GetImageFromLPL : ptr is NULL\0");
+        return 00;
     }
-    else if (index == NULL)
-    {
-        throw NullPointerException("LPL::GetImageFromLPL : cannot return index (= NULL)\0");
-    }
-#endif
-    uint32_t i = beginIndex;
+    unsigned int i = beginIndex;
     if (!(ptr[i] == 'L' && ptr[i+1] == 'P' && ptr[i+2] == 'L'))
     {
-        return NULL;
+        return 00;
     }
     *index += 4;
     switch(ptr[i+3]%T4)
@@ -55,16 +47,17 @@ sf::Image* GetImageFromLPL(const uint8_t* ptr, uint32_t* index, const uint32_t b
             return IFLPL_P8L2(ptr, index, ptr[i+3], i+4);
             break;
         default:
-            return NULL;
+            return 00;
             break;
     }
 }
 
-sf::Image* IFLPL_P8L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, const uint32_t beginIndex){
-    uint32_t w, h, x = 0, y = 0, i = 0, j = beginIndex;
-    uint16_t nb, WxH;
-    uint8_t c;
-    sf::Color tab[256];
+Image* IFLPL_P8L2(const unsigned char* ptr, unsigned int* index, const unsigned char mode, const unsigned int beginIndex)
+{
+    unsigned int w, h, x = 0, y = 0, i = 0, j = beginIndex;
+    unsigned short nb, WxH;
+    unsigned char c;
+    Color tab[256];
     while (i < 256)
     {
         tab[i].r = ptr[j];
@@ -87,11 +80,12 @@ sf::Image* IFLPL_P8L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 2;
     }
     WxH = w*h;
-    sf::Image* img = new sf::Image(w, h, sf::Color(255,0,255,255));
-    if (img == NULL)
+    Image* image = new Image();
+    if (image == 00)
     {
-        return NULL;
+        return 00;
     }
+    image->create(w, h);
     while (WxH > 0)
     {
         nb = ptr[j]*256+ptr[j+1];
@@ -100,7 +94,7 @@ sf::Image* IFLPL_P8L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 3;
         while (nb > 0&&y<h)
         {
-            img->SetPixel(x, y, tab[c]);
+            image->setPixel(x, y, tab[c]);
             x = (x+1)%w;
             if (x == 0)
             {
@@ -110,14 +104,15 @@ sf::Image* IFLPL_P8L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         }
     }
     *index = j;
-    return img;
+    return image;
 }
 
-sf::Image* IFLPL_P8L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, const uint32_t beginIndex){
-    uint32_t w, h, x = 0, y = 0, i = 0, j = beginIndex;
-    uint16_t nb, WxH;
-    uint8_t c;
-    sf::Color tab[256];
+Image* IFLPL_P8L1(const unsigned char* ptr, unsigned int* index, const unsigned char mode, const unsigned int beginIndex)
+{
+    unsigned int w, h, x = 0, y = 0, i = 0, j = beginIndex;
+    unsigned short nb, WxH;
+    unsigned char c;
+    Color tab[256];
     while (i < 256)
     {
         tab[i].r = ptr[j];
@@ -140,11 +135,12 @@ sf::Image* IFLPL_P8L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 2;
     }
     WxH = w*h;
-    sf::Image* img = new sf::Image(w, h, sf::Color(255,0,255,255));
-    if (img == NULL)
+    Image* image = new Image();
+    if (image == 00)
     {
-        return NULL;
+        return 00;
     }
+    image->create(w, h);
     while (WxH > 0)
     {
         nb = ptr[j];
@@ -153,7 +149,7 @@ sf::Image* IFLPL_P8L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 2;
         while (nb > 0&&y<h)
         {
-            img->SetPixel(x, y, tab[c]);
+            image->setPixel(x, y, tab[c]);
             x = (x+1)%w;
             if (x == 0)
             {
@@ -163,14 +159,15 @@ sf::Image* IFLPL_P8L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         }
     }
     *index = j;
-    return img;
+    return image;
 }
 
-sf::Image* IFLPL_P4L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, const uint32_t beginIndex){
-    uint32_t w, h, x = 0, y = 0, i = 0, j = beginIndex;
-    uint16_t nb, WxH;
-    uint8_t c;
-    sf::Color tab[16];
+Image* IFLPL_P4L2(const unsigned char* ptr, unsigned int* index, const unsigned char mode, const unsigned int beginIndex)
+{
+    unsigned int w, h, x = 0, y = 0, i = 0, j = beginIndex;
+    unsigned short nb, WxH;
+    unsigned char c;
+    Color tab[16];
     while (i < 16)
     {
         tab[i].r = ptr[j];
@@ -193,11 +190,12 @@ sf::Image* IFLPL_P4L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 2;
     }
     WxH = w*h;
-    sf::Image* img = new sf::Image(w, h, sf::Color(255,0,255,255));
-    if (img == NULL)
+    Image* image = new Image();
+    if (image == 00)
     {
-        return NULL;
+        return 00;
     }
+    image->create(w, h);
     while (WxH > 0)
     {
         nb = ptr[j]*256+ptr[j+1];
@@ -206,7 +204,7 @@ sf::Image* IFLPL_P4L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 3;
         while (nb > 0&&y<h)
         {
-            img->SetPixel(x, y, tab[c]);
+            image->setPixel(x, y, tab[c]);
             x = (x+1)%w;
             if (x == 0)
             {
@@ -216,14 +214,15 @@ sf::Image* IFLPL_P4L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         }
     }
     *index = j;
-    return img;
+    return image;
 }
 
-sf::Image* IFLPL_P4L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, const uint32_t beginIndex){
-    uint32_t w, h, x = 0, y = 0, i = 0, j = beginIndex;
-    uint16_t nb, WxH;
-    uint8_t c;
-    sf::Color tab[16];
+Image* IFLPL_P4L1(const unsigned char* ptr, unsigned int* index, const unsigned char mode, const unsigned int beginIndex)
+{
+    unsigned int w, h, x = 0, y = 0, i = 0, j = beginIndex;
+    unsigned short nb, WxH;
+    unsigned char c;
+    Color tab[16];
     while (i < 16)
     {
         tab[i].r = ptr[j];
@@ -246,11 +245,12 @@ sf::Image* IFLPL_P4L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 2;
     }
     WxH = w*h;
-    sf::Image* img = new sf::Image(w, h, sf::Color(255,0,255,255));
-    if (img == NULL)
+    Image* image = new Image();
+    if (image == 00)
     {
-        return NULL;
+        return 00;
     }
+    image->create(w, h);
     while (WxH > 0)
     {
         nb = ptr[j];
@@ -259,7 +259,7 @@ sf::Image* IFLPL_P4L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 2;
         while (nb > 0&&y<h)
         {
-            img->SetPixel(x, y, tab[c]);
+            image->setPixel(x, y, tab[c]);
             x = (x+1)%w;
             if (x == 0)
             {
@@ -269,14 +269,15 @@ sf::Image* IFLPL_P4L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         }
     }
     *index = j;
-    return img;
+    return image;
 }
 
-sf::Image* IFLPL_P2L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, const uint32_t beginIndex){
-    uint32_t w, h, x = 0, y = 0, i = 0, j = beginIndex;
-    uint16_t nb, WxH;
-    uint8_t c;
-    sf::Color tab[4];
+Image* IFLPL_P2L2(const unsigned char* ptr, unsigned int* index, const unsigned char mode, const unsigned int beginIndex)
+{
+    unsigned int w, h, x = 0, y = 0, i = 0, j = beginIndex;
+    unsigned short nb, WxH;
+    unsigned char c;
+    Color tab[4];
     while (i < 4)
     {
         tab[i].r = ptr[j];
@@ -299,11 +300,12 @@ sf::Image* IFLPL_P2L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 2;
     }
     WxH = w*h;
-    sf::Image* img = new sf::Image(w, h, sf::Color(255,0,255,255));
-    if (img == NULL)
+    Image* image = new Image();
+    if (image == 00)
     {
-        return NULL;
+        return 00;
     }
+    image->create(w, h);
     while (WxH > 0)
     {
         nb = (ptr[j]&63)+ptr[j+1];
@@ -312,7 +314,7 @@ sf::Image* IFLPL_P2L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 2;
         while (nb > 0&&y<h)
         {
-            img->SetPixel(x, y, tab[c]);
+            image->setPixel(x, y, tab[c]);
             x = (x+1)%w;
             if (x == 0)
             {
@@ -322,14 +324,15 @@ sf::Image* IFLPL_P2L2(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         }
     }
     *index = j;
-    return img;
+    return image;
 }
 
-sf::Image* IFLPL_P2L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, const uint32_t beginIndex){
-    uint32_t w, h, x = 0, y = 0, i = 0, j = beginIndex;
-    uint16_t nb, WxH;
-    uint8_t c;
-    sf::Color tab[4];
+Image* IFLPL_P2L1(const unsigned char* ptr, unsigned int* index, const unsigned char mode, const unsigned int beginIndex)
+{
+    unsigned int w, h, x = 0, y = 0, i = 0, j = beginIndex;
+    unsigned short nb, WxH;
+    unsigned char c;
+    Color tab[4];
     while (i < 4)
     {
         tab[i].r = ptr[j];
@@ -352,11 +355,12 @@ sf::Image* IFLPL_P2L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j += 2;
     }
     WxH = w*h;
-    sf::Image* img = new sf::Image(w, h, sf::Color(255,0,255,255));
-    if (img == NULL)
+    Image* image = new Image();
+    if (image == 00)
     {
-        return NULL;
+        return 00;
     }
+    image->create(w, h);
     while (WxH > 0)
     {
         nb = ptr[j]&63;
@@ -365,7 +369,7 @@ sf::Image* IFLPL_P2L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         j++;
         while (nb > 0&&y<h)
         {
-            img->SetPixel(x, y, tab[c]);
+            image->setPixel(x, y, tab[c]);
             x = (x+1)%w;
             if (x == 0)
             {
@@ -375,69 +379,67 @@ sf::Image* IFLPL_P2L1(const uint8_t* ptr, uint32_t* index, const uint8_t mode, c
         }
     }
     *index = j;
-    return img;
+    return image;
 }
 
-uint8_t* GetLPLFromImage(const sf::Image* ptr, uint32_t* index, const uint8_t mode){
-#ifdef PJ_DEBUG
-    if (ptr == NULL)
+unsigned char* GetLPLFromImage(const Image* image, unsigned int* index, const unsigned char mode)
+{
+    if (image == 00 || index == 00)
     {
-        throw NullPointerException("LPL::GetLPLFromImage : ptr is NULL\0");
+        return 00;
     }
-    else if (index == NULL)
+    Vector2u size = image->getSize();
+    if ((mode&T4) == T4 && (size.x >= 16 || size.y >= 16))
     {
-        throw NullPointerException("LPL::GetLPLFromImage : cannot return index (= NULL)\0");
-    }
-#endif
-    if ((mode&T4) == T4 && (ptr->GetWidth()>=16 || ptr->GetHeight()>=16))
-    {
-        return NULL;
+        return 00;
     }
     switch(mode%T4)
     {
         case (P2+L1):
-            return LPLFI_P2L1(ptr, index, mode);
+            return LPLFI_P2L1(image, index, mode);
             break;
         case (P2+L2):
-            return LPLFI_P2L2(ptr, index, mode);
+            return LPLFI_P2L2(image, index, mode);
             break;
         case (P4+L1):
-            return LPLFI_P4L1(ptr, index, mode);
+            return LPLFI_P4L1(image, index, mode);
             break;
         case (P4+L2):
-            return LPLFI_P4L2(ptr, index, mode);
+            return LPLFI_P4L2(image, index, mode);
             break;
         case (P8+L1):
-            return LPLFI_P8L1(ptr, index, mode);
+            return LPLFI_P8L1(image, index, mode);
             break;
         case (P8+L2):
-            return LPLFI_P8L2(ptr, index, mode);
+            return LPLFI_P8L2(image, index, mode);
             break;
         default:
-            return NULL;
+            return 00;
             break;
     }
 }
 
-uint8_t* LPLFI_P8L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
-    uint32_t nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4;
-    uint8_t C1, C2;
+unsigned char* LPLFI_P8L2(const Image* image, unsigned int* index, const unsigned char mode)
+{
+    unsigned int nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4;
+    unsigned char C1, C2;
     bool truc = false;
-    sf::Color c1(0,0,0,0), c2(0,0,0,0);
-    sf::Color c[256] = {sf::Color(0,0,0,0)};
-    uint8_t Tab[256][256];
-    while (y < img->GetHeight())
+    Color c1(0,0,0,0), c2(0,0,0,0);
+    Color c[256] = {Color(0,0,0,0)};
+    unsigned char Tab[256][256];
+    Vector2u size = image->getSize();
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             c2 = c1;
-            c1 = img->GetPixel(x, y);
+            c1 = image->getPixel(x, y);
             k = 0;
             truc = false;
             while (k < nc && !truc)
             {
-                if (LPL::IsSFColorEqual(c1, c[k]))
+                if (IsSFColorEqual(c1, c[k]))
                 {
                     truc = true;
                 }
@@ -453,7 +455,7 @@ uint8_t* LPLFI_P8L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
                 k--;
             }
             Tab[x][y] = k;
-            if (!LPL::IsSFColorEqual(c1, c2))
+            if (!IsSFColorEqual(c1, c2))
             {
                 nb++;
             }
@@ -463,10 +465,10 @@ uint8_t* LPLFI_P8L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     nb++;
     *index = 4+1024+2+nb*3;
-    uint8_t* tab = new uint8_t[*index];
-    if (tab == NULL)
+    unsigned char* tab = new unsigned char[*index];
+    if (tab == 00)
     {
-        return NULL;
+        return 00;
     }
     x = 0;
     y = 0;
@@ -486,21 +488,21 @@ uint8_t* LPLFI_P8L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     if ((mode&T4)==T4)
     {
-        tab[i] = img->GetWidth()*16+img->GetHeight();
+        tab[i] = size.x*16+size.y;
         i += 1;
     }
     else
     {
-        tab[i] = img->GetWidth();
-        tab[i+1] = img->GetHeight();
+        tab[i] = size.x;
+        tab[i+1] = size.y;
         i += 2;
     }
     nb = 0;
     C1 = Tab[0][0];
-    while (y < img->GetHeight())
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             C2 = C1;
             C1 = Tab[x][y];
@@ -526,25 +528,27 @@ uint8_t* LPLFI_P8L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
     return tab;
 }
 
-uint8_t* LPLFI_P8L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
-    uint32_t nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4, cmp = 0;
-    uint8_t C1, C2;
+unsigned char* LPLFI_P8L1(const Image* image, unsigned int* index, const unsigned char mode)
+{
+    unsigned int nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4, cmp = 0;
+    unsigned char C1, C2;
     bool truc = false;
-    sf::Color c1(0,0,0,0), c2(0,0,0,0);
-    sf::Color c[256] = {sf::Color(0,0,0,0)};
-    uint8_t Tab[256][256];
-    while (y < img->GetHeight())
+    Color c1(0,0,0,0), c2(0,0,0,0);
+    Color c[256] = {Color(0,0,0,0)};
+    unsigned char Tab[256][256];
+    Vector2u size = image->getSize();
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             c2 = c1;
-            c1 = img->GetPixel(x, y);
+            c1 = image->getPixel(x, y);
             k = 0;
             truc = false;
             while (k < nc && !truc)
             {
-                if (LPL::IsSFColorEqual(c1, c[k]))
+                if (IsSFColorEqual(c1, c[k]))
                 {
                     truc = true;
                 }
@@ -560,7 +564,7 @@ uint8_t* LPLFI_P8L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
                 k--;
             }
             Tab[x][y] = k;
-            if (LPL::IsSFColorEqual(c1, c2) && cmp < 255)
+            if (IsSFColorEqual(c1, c2) && cmp < 255)
             {
                 cmp++;
             }
@@ -575,10 +579,10 @@ uint8_t* LPLFI_P8L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     nb++;
     *index = 4+1024+2+nb*2;
-    uint8_t* tab = new (nothrow) uint8_t[*index];
-    if (tab == NULL)
+    unsigned char* tab = new unsigned char[*index];
+    if (tab == 00)
     {
-        return NULL;
+        return 00;
     }
     x = 0;
     y = 0;
@@ -598,21 +602,21 @@ uint8_t* LPLFI_P8L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     if ((mode&T4)==T4)
     {
-        tab[i] = img->GetWidth()*16+img->GetHeight();
+        tab[i] = size.x*16+size.y;
         i += 1;
     }
     else
     {
-        tab[i] = img->GetWidth();
-        tab[i+1] = img->GetHeight();
+        tab[i] = size.x;
+        tab[i+1] = size.y;
         i += 2;
     }
     nb = 0;
     C1 = Tab[0][0];
-    while (y < img->GetHeight())
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             C2 = C1;
             C1 = Tab[x][y];
@@ -636,25 +640,27 @@ uint8_t* LPLFI_P8L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
     return tab;
 }
 
-uint8_t* LPLFI_P4L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
-    uint32_t nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4;
-    uint8_t C1, C2;
+unsigned char* LPLFI_P4L2(const Image* image, unsigned int* index, const unsigned char mode)
+{
+    unsigned int nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4;
+    unsigned char C1, C2;
     bool truc = false;
-    sf::Color c1(0,0,0,0), c2(0,0,0,0);
-    sf::Color c[16] = {sf::Color(0,0,0,0)};
-    uint8_t Tab[256][256];
-    while (y < img->GetHeight())
+    Color c1(0,0,0,0), c2(0,0,0,0);
+    Color c[16] = {Color(0,0,0,0)};
+    unsigned char Tab[256][256];
+    Vector2u size = image->getSize();
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             c2 = c1;
-            c1 = img->GetPixel(x, y);
+            c1 = image->getPixel(x, y);
             k = 0;
             truc = false;
             while (k < nc && !truc)
             {
-                if (LPL::IsSFColorEqual(c1, c[k]))
+                if (IsSFColorEqual(c1, c[k]))
                 {
                     truc = true;
                 }
@@ -670,7 +676,7 @@ uint8_t* LPLFI_P4L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
                 k--;
             }
             Tab[x][y] = k;
-            if (!LPL::IsSFColorEqual(c1, c2))
+            if (!IsSFColorEqual(c1, c2))
             {
                 nb++;
             }
@@ -680,10 +686,10 @@ uint8_t* LPLFI_P4L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     nb++;
     *index = 4+64+2+nb*3;
-    uint8_t* tab = new uint8_t[*index];
-    if (tab == NULL)
+    unsigned char* tab = new unsigned char[*index];
+    if (tab == 00)
     {
-        return NULL;
+        return 00;
     }
     x = 0;
     y = 0;
@@ -703,21 +709,21 @@ uint8_t* LPLFI_P4L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     if ((mode&T4)==T4)
     {
-        tab[i] = img->GetWidth()*16+img->GetHeight();
+        tab[i] = size.x*16+size.y;
         i += 1;
     }
     else
     {
-        tab[i] = img->GetWidth();
-        tab[i+1] = img->GetHeight();
+        tab[i] = size.x;
+        tab[i+1] = size.y;
         i += 2;
     }
     nb = 0;
     C1 = Tab[0][0];
-    while (y < img->GetHeight())
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             C2 = C1;
             C1 = Tab[x][y];
@@ -743,25 +749,27 @@ uint8_t* LPLFI_P4L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
     return tab;
 }
 
-uint8_t* LPLFI_P4L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
-    uint32_t nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4, cmp = 0;
-    uint8_t C1, C2;
+unsigned char* LPLFI_P4L1(const Image* image, unsigned int* index, const unsigned char mode)
+{
+    unsigned int nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4, cmp = 0;
+    unsigned char C1, C2;
     bool truc = false;
-    sf::Color c1(0,0,0,0), c2(0,0,0,0);
-    sf::Color c[16] = {sf::Color(0,0,0,0)};
-    uint8_t Tab[256][256];
-    while (y < img->GetHeight())
+    Color c1(0,0,0,0), c2(0,0,0,0);
+    Color c[16] = {Color(0,0,0,0)};
+    unsigned char Tab[256][256];
+    Vector2u size = image->getSize();
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             c2 = c1;
-            c1 = img->GetPixel(x, y);
+            c1 = image->getPixel(x, y);
             k = 0;
             truc = false;
             while (k < nc && !truc)
             {
-                if (LPL::IsSFColorEqual(c1, c[k]))
+                if (IsSFColorEqual(c1, c[k]))
                 {
                     truc = true;
                 }
@@ -777,7 +785,7 @@ uint8_t* LPLFI_P4L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
                 k--;
             }
             Tab[x][y] = k;
-            if (LPL::IsSFColorEqual(c1, c2) && cmp < 255)
+            if (IsSFColorEqual(c1, c2) && cmp < 255)
             {
                 cmp++;
             }
@@ -792,10 +800,10 @@ uint8_t* LPLFI_P4L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     nb++;
     *index = 4+64+2+nb*2;
-    uint8_t* tab = new uint8_t[*index];
-    if (tab == NULL)
+    unsigned char* tab = new unsigned char[*index];
+    if (tab == 00)
     {
-        return NULL;
+        return 00;
     }
     x = 0;
     y = 0;
@@ -815,21 +823,21 @@ uint8_t* LPLFI_P4L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     if ((mode&T4)==T4)
     {
-        tab[i] = img->GetWidth()*16+img->GetHeight();
+        tab[i] = size.x*16+size.y;
         i += 1;
     }
     else
     {
-        tab[i] = img->GetWidth();
-        tab[i+1] = img->GetHeight();
+        tab[i] = size.x;
+        tab[i+1] = size.y;
         i += 2;
     }
     nb = 0;
     C1 = Tab[0][0];
-    while (y < img->GetHeight())
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             C2 = C1;
             C1 = Tab[x][y];
@@ -853,25 +861,27 @@ uint8_t* LPLFI_P4L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
     return tab;
 }
 
-uint8_t* LPLFI_P2L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
-    uint32_t nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4, cmp = 0;
-    uint8_t C1, C2;
+unsigned char* LPLFI_P2L2(const Image* image, unsigned int* index, const unsigned char mode)
+{
+    unsigned int nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4, cmp = 0;
+    unsigned char C1, C2;
     bool truc = false;
-    sf::Color c1(0,0,0,0), c2(0,0,0,0);
-    sf::Color c[4] = {sf::Color(0,0,0,0)};
-    uint8_t Tab[256][256];
-    while (y < img->GetHeight())
+    Color c1(0,0,0,0), c2(0,0,0,0);
+    Color c[4] = {Color(0,0,0,0)};
+    unsigned char Tab[256][256];
+    Vector2u size = image->getSize();
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             c2 = c1;
-            c1 = img->GetPixel(x, y);
+            c1 = image->getPixel(x, y);
             k = 0;
             truc = false;
             while (k < nc && !truc)
             {
-                if (LPL::IsSFColorEqual(c1, c[k]))
+                if (IsSFColorEqual(c1, c[k]))
                 {
                     truc = true;
                 }
@@ -887,7 +897,7 @@ uint8_t* LPLFI_P2L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
                 k--;
             }
             Tab[x][y] = k;
-            if (LPL::IsSFColorEqual(c1, c2) && cmp < 16383)
+            if (IsSFColorEqual(c1, c2) && cmp < 16383)
             {
                 cmp++;
             }
@@ -902,10 +912,10 @@ uint8_t* LPLFI_P2L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     nb++;
     *index = 4+16+2+nb*2;
-    uint8_t* tab = new uint8_t[*index];
-    if (tab == NULL)
+    unsigned char* tab = new unsigned char[*index];
+    if (tab == 00)
     {
-        return NULL;
+        return 00;
     }
     x = 0;
     y = 0;
@@ -925,21 +935,21 @@ uint8_t* LPLFI_P2L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     if ((mode&T4)==T4)
     {
-        tab[i] = img->GetWidth()*16+img->GetHeight();
+        tab[i] = size.x*16+size.y;
         i += 1;
     }
     else
     {
-        tab[i] = img->GetWidth();
-        tab[i+1] = img->GetHeight();
+        tab[i] = size.x;
+        tab[i+1] = size.y;
         i += 2;
     }
     nb = 0;
     C1 = Tab[0][0];
-    while (y < img->GetHeight())
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             C2 = C1;
             C1 = Tab[x][y];
@@ -963,25 +973,27 @@ uint8_t* LPLFI_P2L2(const sf::Image* img, uint32_t* index, const uint8_t mode){
     return tab;
 }
 
-uint8_t* LPLFI_P2L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
-    uint32_t nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4, cmp = 0;
-    uint8_t C1, C2;
+unsigned char* LPLFI_P2L1(const Image* image, unsigned int* index, const unsigned char mode)
+{
+    unsigned int nc = 0, x = 0, y = 0, nb = 0, k = 0, i = 4, cmp = 0;
+    unsigned char C1, C2;
     bool truc = false;
-    sf::Color c1(0,0,0,0), c2(0,0,0,0);
-    sf::Color c[4] = {sf::Color(0,0,0,0)};
-    uint8_t Tab[256][256];
-    while (y < img->GetHeight())
+    Color c1(0,0,0,0), c2(0,0,0,0);
+    Color c[4] = {Color(0,0,0,0)};
+    unsigned char Tab[256][256];
+    Vector2u size = image->getSize();
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             c2 = c1;
-            c1 = img->GetPixel(x, y);
+            c1 = image->getPixel(x, y);
             k = 0;
             truc = false;
             while (k < nc && !truc)
             {
-                if (LPL::IsSFColorEqual(c1, c[k]))
+                if (IsSFColorEqual(c1, c[k]))
                 {
                     truc = true;
                 }
@@ -997,7 +1009,7 @@ uint8_t* LPLFI_P2L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
                 k--;
             }
             Tab[x][y] = k;
-            if (LPL::IsSFColorEqual(c1, c2) && cmp < 63)
+            if (IsSFColorEqual(c1, c2) && cmp < 63)
             {
                 cmp++;
             }
@@ -1012,10 +1024,10 @@ uint8_t* LPLFI_P2L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     nb++;
     *index = 4+16+2+nb;
-    uint8_t* tab = new uint8_t[*index];
-    if (tab == NULL)
+    unsigned char* tab = new unsigned char[*index];
+    if (tab == 00)
     {
-        return NULL;
+        return 00;
     }
     x = 0;
     y = 0;
@@ -1035,21 +1047,21 @@ uint8_t* LPLFI_P2L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
     }
     if ((mode&T4)==T4)
     {
-        tab[i] = img->GetWidth()*16+img->GetHeight();
+        tab[i] = size.x*16+size.y;
         i += 1;
     }
     else
     {
-        tab[i] = img->GetWidth();
-        tab[i+1] = img->GetHeight();
+        tab[i] = size.x;
+        tab[i+1] = size.y;
         i += 2;
     }
     nb = 0;
     C1 = Tab[0][0];
-    while (y < img->GetHeight())
+    while (y < size.y)
     {
         x = 0;
-        while (x < img->GetWidth())
+        while (x < size.x)
         {
             C2 = C1;
             C1 = Tab[x][y];
@@ -1071,6 +1083,6 @@ uint8_t* LPLFI_P2L1(const sf::Image* img, uint32_t* index, const uint8_t mode){
     return tab;
 }
 
-}}
+}
 
 #endif
